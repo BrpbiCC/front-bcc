@@ -1,0 +1,187 @@
+<div class="login-wrapper">
+  <div class="login-card">
+    <!-- Theme Toggle Button -->
+    <button
+      class="theme-toggle-btn"
+      (click)="toggleTheme()"
+      [attr.aria-label]="isDarkTheme ? 'Cambiar a tema claro' : 'Cambiar a tema oscuro'"
+    >
+      <!-- Sol (visible en tema claro) -->
+      <svg
+        *ngIf="!isDarkTheme"
+        class="theme-icon sun-icon"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <circle cx="12" cy="12" r="5"></circle>
+        <line x1="12" y1="1" x2="12" y2="3"></line>
+        <line x1="12" y1="21" x2="12" y2="23"></line>
+        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+        <line x1="1" y1="12" x2="3" y2="12"></line>
+        <line x1="21" y1="12" x2="23" y2="12"></line>
+        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+      </svg>
+
+      <!-- Luna (visible en tema oscuro) -->
+      <svg *ngIf="isDarkTheme" class="theme-icon moon-icon" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+      </svg>
+    </button>
+
+    <div class="login-header">
+      <img [src]="logoLight" alt="FrioCheck Logo" class="logo-image logo-light" />
+      <img [src]="logoDark" alt="FrioCheck Logo" class="logo-image logo-dark" />
+      <p class="brand-sub">Gestión de Activos NFC</p>
+    </div>
+
+    <form class="login-form" [formGroup]="loginForm" (ngSubmit)="onLogin()" novalidate>
+      <div class="form-group">
+        <label for="email">Correo</label>
+        <div class="input-wrap" [class.input-invalid]="shouldShowFieldError('email')">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+            <circle cx="12" cy="7" r="4" />
+          </svg>
+          <input id="email" type="email" formControlName="email" placeholder="Ingresa tu correo" autocomplete="username" />
+        </div>
+        <div *ngIf="shouldShowFieldError('email')" class="field-error" role="alert">{{ getFieldError('email') }}</div>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Contraseña</label>
+        <div class="input-wrap input-wrap-password" [class.input-invalid]="shouldShowFieldError('password')">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+            <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+          </svg>
+          <input
+            id="password"
+            [type]="showPassword ? 'text' : 'password'"
+            formControlName="password"
+            placeholder="••••••••"
+            autocomplete="current-password"
+          />
+
+          <button
+            type="button"
+            class="password-toggle"
+            (click)="togglePasswordVisibility()"
+            [attr.aria-label]="showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+          >
+            <svg
+              *ngIf="!showPassword"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z" />
+              <circle cx="12" cy="12" r="3" />
+            </svg>
+
+            <svg
+              *ngIf="showPassword"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M17.94 17.94A10.87 10.87 0 0 1 12 20C5 20 1 12 1 12a21.77 21.77 0 0 1 5.06-6.94" />
+              <path d="M9.9 4.24A10.93 10.93 0 0 1 12 4c7 0 11 8 11 8a21.72 21.72 0 0 1-3.17 4.83" />
+              <path d="M14.12 14.12a3 3 0 1 1-4.24-4.24" />
+              <line x1="1" y1="1" x2="23" y2="23" />
+            </svg>
+          </button>
+        </div>
+        <div *ngIf="shouldShowFieldError('password')" class="field-error" role="alert">{{ getFieldError('password') }}</div>
+      </div>
+
+      <div *ngIf="loginError" class="login-error" role="alert">{{ loginError }}</div>
+
+      <button class="btn-login" type="submit" [disabled]="isLoading">
+        <span *ngIf="!isLoading">Iniciar Sesión</span>
+        <span *ngIf="isLoading">Ingresando...</span>
+      </button>
+
+      <a href="#" class="forgot-link" (click)="openForgotModal($event)">¿Olvidaste tu contraseña?</a>
+    </form>
+  </div>
+
+  <!-- Modal de recuperación de contraseña -->
+  <div *ngIf="showForgotModal" class="modal-overlay">
+    <div class="modal-content">
+      <button class="modal-close" (click)="closeForgotModal()">&times;</button>
+
+      <h2 class="modal-title">Recuperar contraseña</h2>
+      <p class="modal-description">Ingresa tu correo electrónico o usuario para restablecer tu contraseña.</p>
+
+      <!-- Formulario - Se muestra solo si no se ha enviado -->
+      <div *ngIf="!forgotRecoverySent">
+        <div class="form-group">
+          <label for="forgotEmail">Correo electrónico o usuario</label>
+          <div class="input-wrap">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+              <polyline points="22,6 12,13 2,6" />
+            </svg>
+            <input id="forgotEmail" type="text" [(ngModel)]="forgotEmail" placeholder="Ingresa tu correo o usuario" />
+          </div>
+        </div>
+
+        <div *ngIf="forgotErrorMessage" class="message error-message">
+          {{ forgotErrorMessage }}
+        </div>
+
+        <div class="modal-buttons">
+          <button class="btn-cancel" (click)="closeForgotModal()">Cancelar</button>
+          <button class="btn-send" (click)="onSendRecovery()" [disabled]="forgotIsLoading">
+            <span *ngIf="!forgotIsLoading">Enviar enlace</span>
+            <span *ngIf="forgotIsLoading">Enviando...</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Mensaje de éxito - Se muestra después de enviar -->
+      <div *ngIf="forgotRecoverySent" class="success-state">
+        <div class="success-icon">✓</div>
+        <div *ngIf="forgotSuccessMessage" class="message success-message">
+          {{ forgotSuccessMessage }}
+        </div>
+        <p class="success-help">Revisa tu bandeja de entrada (incluyendo spam) para seguir las instrucciones de recuperación.</p>
+        <p class="auto-close-info">El modal se cerrará automáticamente en 2 segundos...</p>
+        <button class="btn-close" (click)="closeForgotModal()">Cerrar ahora</button>
+      </div>
+    </div>
+  </div>
+</div>
