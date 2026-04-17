@@ -1,0 +1,45 @@
+.ticket-detail-page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.ticket-detail-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.ticket-detail-header h2 {
+  margin: 0;
+}
+
+.btn-link {
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.btn-link:hover {
+  text-decoration: underline;
+}
+
+.ticket-detail-card {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface-lowest);
+  padding: 16px;
+}
+
+.ticket-detail-card p {
+  margin: 0 0 8px 0;
+}
+
+.ticket-detail-card p:last-child {
+  margin-bottom: 0;
+}
+
+.hint {
+  color: var(--text-muted);
+}

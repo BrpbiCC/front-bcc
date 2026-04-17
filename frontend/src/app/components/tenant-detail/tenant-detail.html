@@ -1,0 +1,59 @@
+<div class="tenant-detail-wrapper">
+  <div class="tenant-detail-header">
+    <h1>Detalle del Tenant</h1>
+    <a class="btn-link" [routerLink]="['/tenants']">Volver a Tenants</a>
+  </div>
+
+  <div class="load-error" *ngIf="loadError">{{ loadError }}</div>
+  <div class="load-error" *ngIf="actionError">{{ actionError }}</div>
+
+  <div class="tenant-card" *ngIf="tenant && !isLoading">
+    <div class="tenant-grid" *ngIf="!isEditing">
+      <div><strong>ID:</strong> {{ tenant.id }}</div>
+      <div><strong>Name:</strong> {{ tenant.name || '-' }}</div>
+      <div><strong>Slug:</strong> {{ tenant.slug || '-' }}</div>
+      <div><strong>Estado:</strong> {{ tenant.estado }}</div>
+      <div><strong>Usuarios:</strong> {{ tenant.usersCount }}</div>
+      <div><strong>Creado:</strong> {{ tenant.createdAt || '-' }}</div>
+      <div><strong>Actualizado:</strong> {{ tenant.updatedAt || '-' }}</div>
+      <div><strong>Description:</strong> {{ tenant.description || '-' }}</div>
+      <div class="full-row"><strong>Logo URL:</strong> {{ tenant.logoUrl || '-' }}</div>
+    </div>
+
+    <form class="tenant-edit-form" *ngIf="isEditing">
+      <div class="form-group">
+        <label for="name">Name *</label>
+        <input id="name" type="text" [(ngModel)]="editTenantForm.name" name="name" required>
+      </div>
+
+      <div class="form-group">
+        <label for="slug">Slug *</label>
+        <input id="slug" type="text" [(ngModel)]="editTenantForm.slug" name="slug" required>
+      </div>
+
+      <div class="form-group">
+        <label for="description">Description</label>
+        <input id="description" type="text" [(ngModel)]="editTenantForm.description" name="description">
+      </div>
+
+      <div class="form-group">
+        <label for="logoUrl">Logo URL</label>
+        <input id="logoUrl" type="url" [(ngModel)]="editTenantForm.logoUrl" name="logoUrl">
+      </div>
+    </form>
+
+    <div class="actions" *ngIf="!isEditing">
+      <button class="btn-action" (click)="startEdit()">Editar</button>
+      <button class="btn-action btn-danger" (click)="deleteTenant()">Eliminar</button>
+    </div>
+
+    <div class="actions" *ngIf="isEditing">
+      <button class="btn-action" (click)="saveChanges()">Guardar</button>
+      <button class="btn-action" (click)="cancelEdit()">Cancelar</button>
+    </div>
+  </div>
+
+  <div class="tenant-card" *ngIf="isLoading">
+    Cargando detalle del tenant...
+  </div>
+</div>

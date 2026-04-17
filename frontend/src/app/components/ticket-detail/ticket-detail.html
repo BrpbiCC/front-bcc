@@ -1,0 +1,11 @@
+<div class="ticket-detail-page">
+  <div class="ticket-detail-header">
+    <h2>Detalle del Ticket</h2>
+    <a class="btn-link" [routerLink]="['/tickets']">Volver a Tickets</a>
+  </div>
+
+  <div class="ticket-detail-card">
+    <p><strong>ID:</strong> {{ ticketId || 'Sin identificador' }}</p>
+    <p class="hint">Este módulo queda listo para conectar con el endpoint de detalle.</p>
+  </div>
+</div>

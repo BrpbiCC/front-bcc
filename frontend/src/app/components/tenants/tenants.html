@@ -1,0 +1,135 @@
+<div class="tenants-wrapper">
+
+  <div class="tenants-header">
+    <div>
+      <h1 class="tenants-title">Tenants</h1>
+      <p class="tenants-subtitle">Gestión global de organizaciones</p>
+    </div>
+  </div>
+
+  <!-- Pestañas -->
+  <div class="tabs-container">
+    <button 
+      class="tab-button" 
+      [class.active]="activeTab === 'list'"
+      (click)="setActiveTab('list')">
+      Lista de Tenants
+    </button>
+    <button 
+      class="tab-button" 
+      [class.active]="activeTab === 'create'"
+      (click)="setActiveTab('create')">
+      Crear Tenant
+    </button>
+  </div>
+
+  <!-- Pestaña: Lista de Tenants -->
+  <div class="tab-content" *ngIf="activeTab === 'list'">
+    <div class="load-error" *ngIf="loadError">{{ loadError }}</div>
+
+    <div class="stats-row">
+      <div class="stat-card">
+        <span class="stat-label">Total Tenants</span>
+        <span class="stat-value">{{ tenants.length }}</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Activos</span>
+        <span class="stat-value stat-activo">{{ tenants.filter(t => t.estado === 'Activo').length }}</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Inactivos</span>
+        <span class="stat-value stat-inactivo">{{ tenants.filter(t => t.estado === 'Inactivo').length }}</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">En Mantenimiento</span>
+        <span class="stat-value stat-mant">{{ tenants.filter(t => t.estado === 'Mantenimiento').length }}</span>
+      </div>
+    </div>
+
+    <div class="table-card">
+      <table class="tenants-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Usuarios</th>
+            <th>Estado</th>
+            <th>Fecha alta</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let t of tenants">
+            <td><code class="id-code">{{ t.id }}</code></td>
+            <td class="nombre-cell">{{ t.nombre }}</td>
+            <td>{{ t.usuarios }}</td>
+            <td><span class="estado-badge" [ngClass]="getEstadoClass(t.estado)">{{ t.estado }}</span></td>
+            <td class="fecha-cell">{{ t.fecha }}</td>
+            <td>
+              <a class="btn-accion" [routerLink]="['/tenants', t.id]">Ver</a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Pestaña: Crear Tenant -->
+  <div class="tab-content" *ngIf="activeTab === 'create'">
+    <form class="create-form">
+      <div class="load-error" *ngIf="createError">{{ createError }}</div>
+
+      <div class="form-group">
+        <label for="name">Name *</label>
+        <input 
+          type="text" 
+          id="name" 
+          [(ngModel)]="newTenant.name"
+          name="name"
+          placeholder="Ej: Bresler Chile"
+          required>
+      </div>
+
+      <div class="form-group">
+        <label for="slug">Slug *</label>
+        <input
+          type="text"
+          id="slug"
+          [(ngModel)]="newTenant.slug"
+          name="slug"
+          placeholder="Ej: bresler-chile"
+          required>
+      </div>
+
+      <div class="form-group">
+        <label for="description">Description</label>
+        <input
+          type="text"
+          id="description"
+          [(ngModel)]="newTenant.description"
+          name="description"
+          placeholder="Ej: Empresa de refrigeracion industrial">
+      </div>
+
+      <div class="form-group">
+        <label for="logoUrl">Logo URL</label>
+        <input
+          type="url"
+          id="logoUrl"
+          [(ngModel)]="newTenant.logoUrl"
+          name="logoUrl"
+          placeholder="https://ejemplo.com/logo.png">
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn-primary" (click)="createTenant()">
+          Crear Tenant
+        </button>
+        <button type="button" class="btn-secondary" (click)="setActiveTab('list')">
+          Cancelar
+        </button>
+      </div>
+    </form>
+  </div>
+
+</div>
