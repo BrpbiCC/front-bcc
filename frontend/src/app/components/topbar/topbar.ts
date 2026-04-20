@@ -13,6 +13,7 @@ interface Notification {
   time: string;
   type: 'alert' | 'success' | 'info';
   read: boolean;
+  route: string;
 }
 
 @Component({
@@ -53,9 +54,9 @@ export class Topbar implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.notifications = [
-      { id: 1, title: 'Ticket #1247 asignado', message: 'Se le ha asignado un nuevo ticket de mantención', time: 'Hace 5 min', type: 'alert', read: false },
-      { id: 2, title: 'Visita completada', message: 'La visita al local #432 fue marcada como completada', time: 'Hace 1 hora', type: 'success', read: false },
-      { id: 3, title: 'Sistema actualizado', message: 'El sistema ha sido actualizado a la versión 2.1', time: 'Hace 3 horas', type: 'info', read: true },
+      { id: 1, title: 'Ticket #1247 asignado', message: 'Se le ha asignado un nuevo ticket de mantencion', time: 'Hace 5 min', type: 'alert', read: false, route: '/tickets' },
+      { id: 2, title: 'Visita completada', message: 'La visita al local #432 fue marcada como completada', time: 'Hace 1 hora', type: 'success', read: false, route: '/visitas' },
+      { id: 3, title: 'Sistema actualizado', message: 'El sistema fue actualizado a la version 2.1', time: 'Hace 3 horas', type: 'info', read: true, route: '/dashboard' },
     ];
 
     this.loadSavedTheme();
@@ -97,6 +98,22 @@ export class Topbar implements OnInit, OnDestroy {
 
   markAllRead(): void {
     this.notifications.forEach((n) => (n.read = true));
+  }
+
+  getUnreadCount(): number {
+    return this.notifications.filter((notification) => !notification.read).length;
+  }
+
+  openNotification(notification: Notification): void {
+    notification.read = true;
+    this.showNotifications = false;
+    this.router.navigate([notification.route], { queryParams: { from: 'topbar-notifications', notificationId: notification.id } });
+  }
+
+  goToNotificationsCenter(): void {
+    this.markAllRead();
+    this.showNotifications = false;
+    this.router.navigate(['/reportes'], { queryParams: { view: 'notifications' } });
   }
 
   logout() {

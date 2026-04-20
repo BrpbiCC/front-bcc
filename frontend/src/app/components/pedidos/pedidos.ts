@@ -1,8 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { FilterService } from '../../core/services/filter.service';
 import { ViewSearchFiltersComponent } from '../view-search-filters/view-search-filters.component';
+import { Subscription } from 'rxjs';
+import { BackendSale, SalesService } from '../../core/services/sales.service';
 
 interface Pedido {
   orden: string;
@@ -13,6 +15,8 @@ interface Pedido {
   fechaSolicitud: string;
   estado: string;
   observaciones?: string;
+  tipo?: string;
+  fechaISO?: string;
 }
 
 @Component({
@@ -22,37 +26,11 @@ interface Pedido {
   templateUrl: './pedidos.html',
   styleUrls: ['./pedidos.css']
 })
-export class Pedidos implements OnInit {
+export class Pedidos implements OnInit, OnDestroy {
   activeTab = 'list';
-  pedidos: Pedido[] = [
-    {
-      orden: 'ORD-0091',
-      material: 'Etiquetas NFC NTAG213',
-      cantidad: 500,
-      unidad: 'uds',
-      prioridad: 'Media',
-      fechaSolicitud: '20 Mar 2026',
-      estado: 'En Camino'
-    },
-    {
-      orden: 'ORD-0090',
-      material: 'Termostato Digital W1209',
-      cantidad: 15,
-      unidad: 'uds',
-      prioridad: 'Alta',
-      fechaSolicitud: '15 Mar 2026',
-      estado: 'Entregado'
-    },
-    {
-      orden: 'ORD-0089',
-      material: 'Sensor de temperatura DS18B20',
-      cantidad: 30,
-      unidad: 'uds',
-      prioridad: 'Baja',
-      fechaSolicitud: '10 Mar 2026',
-      estado: 'Pendiente'
-    }
-  ];
+  pedidos: Pedido[] = [];
+  private allPedidos: Pedido[] = [];
+  private readonly subscriptions = new Subscription();
 
   newPedido: Partial<Pedido> = {
     material: '',
@@ -67,10 +45,25 @@ export class Pedidos implements OnInit {
   prioridades = ['Baja', 'Media', 'Alta', 'Urgente'];
   selectedPedido?: Pedido;
 
-  constructor(private filterService: FilterService) {}
+  constructor(
+    private filterService: FilterService,
+    private salesService: SalesService,
+  ) {}
 
   ngOnInit(): void {
     this.filterService.setActiveView('pedidos');
+
+    this.subscriptions.add(
+      this.filterService.filters$.subscribe((filters) => {
+        this.applyActiveFilters(filters);
+      }),
+    );
+
+    this.loadSales();
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
   }
 
   setActiveTab(tab: string): void {
@@ -99,8 +92,151 @@ export class Pedidos implements OnInit {
     };
 
     this.pedidos.unshift(pedido);
+    this.allPedidos.unshift(pedido);
+    this.applyActiveFilters(this.filterService.getFilters());
     this.resetForm();
     this.setActiveTab('list');
+  }
+
+  private loadSales(): void {
+    this.salesService.getSales().subscribe((sales) => {
+      this.allPedidos = sales.map((sale) => this.mapSaleToPedido(sale));
+      this.applyActiveFilters(this.filterService.getFilters());
+
+      if (this.selectedPedido) {
+        this.selectedPedido = this.pedidos.find((p) => p.orden === this.selectedPedido?.orden);
+      }
+    });
+  }
+
+  private mapSaleToPedido(sale: BackendSale): Pedido {
+    const description = sale.description?.trim();
+    const detailParts: string[] = [];
+
+    if (sale.tenantName) {
+      detailParts.push(`Tenant: ${sale.tenantName}`);
+    }
+
+    if (sale.machineId) {
+      detailParts.push(`Maquina ID: ${sale.machineId}`);
+    }
+
+    if (sale.vendorId) {
+      detailParts.push(`Vendedor ID: ${sale.vendorId}`);
+    }
+
+    return {
+      orden: sale.id,
+      material: description && description.length > 0 ? description : `Venta ${sale.id.slice(0, 8)}`,
+      cantidad: sale.amount,
+      unidad: 'CLP',
+      prioridad: this.mapPriorityByAmount(sale.amount),
+      fechaSolicitud: this.toDisplayDate(sale.saleDate),
+      estado: 'Entregado',
+      observaciones: detailParts.join(' | '),
+      tipo: 'venta',
+      fechaISO: sale.saleDate,
+    };
+  }
+
+  private mapPriorityByAmount(amount: number): string {
+    if (amount >= 100000) {
+      return 'Alta';
+    }
+
+    if (amount >= 30000) {
+      return 'Media';
+    }
+
+    return 'Baja';
+  }
+
+  private toDisplayDate(dateIso: string): string {
+    const date = new Date(dateIso);
+    if (Number.isNaN(date.getTime())) {
+      return 'Fecha desconocida';
+    }
+
+    return date.toLocaleDateString('es-CL', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+    });
+  }
+
+  private applyActiveFilters(filters: { [key: string]: string }): void {
+    const normalizedSearch = (filters['search'] ?? '').toLowerCase().trim();
+    const normalizedStatus = (filters['status'] ?? '').toLowerCase().trim();
+    const normalizedType = (filters['type'] ?? '').toLowerCase().trim();
+    const dateFilter = (filters['date'] ?? '').trim();
+
+    this.pedidos = this.allPedidos.filter((pedido) => {
+      const matchesSearch =
+        !normalizedSearch ||
+        [pedido.orden, pedido.material, pedido.observaciones ?? '', pedido.estado, pedido.prioridad]
+          .join(' ')
+          .toLowerCase()
+          .includes(normalizedSearch);
+
+      const matchesStatus =
+        !normalizedStatus || this.matchesStatusFilter(pedido.estado, normalizedStatus);
+
+      const matchesType = !normalizedType || this.matchesTypeFilter(pedido.tipo ?? '', normalizedType);
+
+      const matchesDate = !dateFilter || this.matchesDateFilter(pedido.fechaISO, dateFilter);
+
+      return matchesSearch && matchesStatus && matchesType && matchesDate;
+    });
+
+    if (this.selectedPedido && !this.pedidos.some((pedido) => pedido.orden === this.selectedPedido?.orden)) {
+      this.selectedPedido = undefined;
+    }
+  }
+
+  private matchesStatusFilter(currentStatus: string, filterValue: string): boolean {
+    const normalizedCurrent = currentStatus.toLowerCase();
+
+    if (filterValue === 'en-proceso') {
+      return normalizedCurrent === 'en proceso' || normalizedCurrent === 'en camino';
+    }
+
+    return normalizedCurrent === filterValue;
+  }
+
+  private matchesTypeFilter(currentType: string, filterValue: string): boolean {
+    const normalizedCurrent = currentType.toLowerCase();
+
+    if (filterValue === 'venta') {
+      return normalizedCurrent === 'venta';
+    }
+
+    if (filterValue === 'compra') {
+      return normalizedCurrent === 'compra';
+    }
+
+    if (filterValue === 'servicio') {
+      return normalizedCurrent === 'servicio';
+    }
+
+    return normalizedCurrent === filterValue;
+  }
+
+  private matchesDateFilter(dateIso: string | undefined, dateFilter: string): boolean {
+    if (!dateIso) {
+      return false;
+    }
+
+    const date = new Date(dateIso);
+    if (Number.isNaN(date.getTime())) {
+      return false;
+    }
+
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const normalizedDate = `${year}-${month}-${day}`;
+
+    return normalizedDate === dateFilter;
   }
 
   private generateOrden(): string {

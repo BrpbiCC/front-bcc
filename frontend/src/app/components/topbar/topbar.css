@@ -10,7 +10,7 @@
   display: flex;
   align-items: center;
   gap: 1rem;
-  padding: 0px;
+  padding: 0 16px 0 12px;
 }
 
 
@@ -21,6 +21,7 @@
 
 .topbar-content > .user-actions {
   margin-left: auto;
+  margin-right: 6px;
   flex-shrink: 0;
 }
 
@@ -155,8 +156,8 @@
 
 .badge-dot {
   position: absolute;
-  top: 4px;
-  right: 4px;
+  top: 6px;
+  right: 6px;
   width: 7px;
   height: 7px;
   background-color: var(--primary);
@@ -164,15 +165,32 @@
   border: 1.5px solid var(--surface);
 }
 
+.badge-count {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: 999px;
+  background: var(--primary);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 16px;
+  text-align: center;
+  border: 1px solid var(--surface-lowest);
+}
+
 .notifications-dropdown {
   position: absolute;
   top: calc(100% + 8px);
   right: 0;
-  width: 320px;
+  width: 350px;
   background-color: var(--surface-lowest);
   border: 1px solid var(--border);
-  border-radius: 10px;
-  box-shadow: var(--shadow-lg);
+  border-radius: 14px;
+  box-shadow: 0 16px 30px rgba(15, 23, 42, 0.14);
   z-index: 1000;
   overflow: hidden;
 }
@@ -208,7 +226,11 @@
 .notification-item {
   display: flex;
   gap: 12px;
+  width: 100%;
   padding: 12px 16px;
+  background: transparent;
+  border: 0;
+  text-align: left;
   border-bottom: 1px solid var(--border);
   cursor: pointer;
   transition: background 0.2s;
@@ -219,7 +241,7 @@
 }
 
 .notification-item.unread {
-  background-color: var(--primary-dim);
+  background-color: rgba(242, 101, 34, 0.08);
 }
 
 .notification-item:last-child {
@@ -289,6 +311,33 @@
   font-size: 0.85rem;
 }
 
+.notifications-footer {
+  display: flex;
+  justify-content: center;
+  padding: 10px 12px 12px;
+  border-top: 1px solid var(--border);
+  background: var(--surface-lowest);
+}
+
+.view-all-notifications {
+  height: 32px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: linear-gradient(130deg, var(--surface-lowest), var(--surface));
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 700;
+  padding: 0 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.view-all-notifications:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+  background: linear-gradient(130deg, rgba(242, 101, 34, 0.12), transparent 80%);
+}
+
 .user-profile-container {
   position: relative;
 }
@@ -309,7 +358,7 @@
   align-items: center;
   gap: 0.75rem;
   cursor: pointer;
-  padding: 0.3rem 0.6rem;
+  padding: 0.35rem 0.85rem 0.35rem 0.55rem;
   border-radius: 8px;
   transition: background 0.2s, border-color 0.2s;
   border: 1px solid var(--border);
@@ -430,6 +479,7 @@
   display: flex;
   flex-direction: column;
   line-height: 1.2;
+  padding-right: 2px;
 }
 
 .user-name {

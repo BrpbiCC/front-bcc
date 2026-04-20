@@ -123,3 +123,72 @@ body {
 .hoverable:hover {
   background-color: var(--hover-bg);
 }
+
+/* ══════════════════════════════════════════════════════ 
+   Widget Menu Panel (CDK Overlay)
+════════════════════════════════════════════════════════ */
+.cdk-overlay-pane .widget-menu-panel {
+  --mat-menu-container-color: rgba(255, 255, 255, 0.72);
+  --mdc-menu-container-color: rgba(255, 255, 255, 0.72);
+  background: rgba(255, 255, 255, 0.72) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 0.5px solid rgba(255, 255, 255, 0.6) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1) !important;
+  overflow: hidden;
+}
+
+.cdk-overlay-pane .widget-menu-panel .mat-mdc-menu-content {
+  padding: 6px;
+  background: transparent !important;
+}
+
+.cdk-overlay-pane .widget-menu-panel .mat-mdc-menu-item {
+  min-height: 40px;
+  border-radius: 9px;
+  color: var(--text-primary);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.cdk-overlay-pane .widget-menu-panel .mat-mdc-menu-item .mat-icon {
+  color: var(--primary);
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+}
+
+.cdk-overlay-pane .widget-menu-panel .mat-mdc-menu-item:hover {
+  background: linear-gradient(120deg, rgba(242, 101, 34, 0.12), rgba(242, 101, 34, 0.06));
+}
+
+.cdk-overlay-pane .widget-menu-panel .mat-mdc-menu-item:hover .mat-icon {
+  color: var(--primary-hover);
+}
+
+/* Tema oscuro */
+[data-theme='dark'] .cdk-overlay-pane .widget-menu-panel {
+  --mat-menu-container-color: rgba(30, 42, 58, 0.88);
+  --mdc-menu-container-color: rgba(30, 42, 58, 0.88);
+  background: rgba(30, 42, 58, 0.88) !important;
+  border: 0.5px solid rgba(78, 99, 125, 0.4) !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3) !important;
+}
+
+[data-theme='dark'] .cdk-overlay-pane .widget-menu-panel .mat-mdc-menu-item {
+  color: #FFFFFF;
+}
+
+[data-theme='dark'] .cdk-overlay-pane .widget-menu-panel .mat-mdc-menu-item .mat-icon {
+  color: #FB923C;
+}
+
+[data-theme='dark'] .cdk-overlay-pane .widget-menu-panel .mat-mdc-menu-item:hover {
+  background: linear-gradient(120deg, rgba(249, 115, 22, 0.2), rgba(249, 115, 22, 0.1));
+}
+
+[data-theme='dark'] .cdk-overlay-pane .widget-menu-panel .mat-mdc-menu-item:hover .mat-icon {
+  color: #FBBF24;
+}

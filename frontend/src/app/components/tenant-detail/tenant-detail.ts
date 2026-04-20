@@ -9,6 +9,7 @@ import {
   type UpdateTenantRequest,
 } from '../../core/services/tenants.service';
 import { UsersService } from '../../core/services/users.service';
+import { ConfirmDialogService } from '../../core/services/confirm-dialog.service';
 
 interface TenantDetailViewModel {
   id: string;
@@ -56,6 +57,7 @@ export class TenantDetail implements OnInit {
     private router: Router,
     private tenantsService: TenantsService,
     private usersService: UsersService,
+    private confirmDialog: ConfirmDialogService,
   ) {}
 
   ngOnInit(): void {
@@ -136,14 +138,18 @@ export class TenantDetail implements OnInit {
     });
   }
 
-  deleteTenant(): void {
+  async deleteTenant(): Promise<void> {
     if (!this.tenant) {
       return;
     }
 
-    const confirmed = confirm(
-      `¿Seguro que deseas eliminar el tenant ${this.tenant.name}? Esta accion no se puede deshacer.`,
-    );
+    const confirmed = await this.confirmDialog.confirm({
+      title: 'Eliminar tenant',
+      message: `Se eliminara el tenant ${this.tenant.name}. Esta accion no se puede deshacer.`,
+      confirmText: 'Eliminar',
+      cancelText: 'Cancelar',
+      variant: 'danger',
+    });
 
     if (!confirmed) {
       return;

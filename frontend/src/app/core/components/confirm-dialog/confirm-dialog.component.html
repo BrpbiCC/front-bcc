@@ -1,0 +1,20 @@
+<section class="confirm-shell" [class.danger]="data.variant === 'danger'" [class.warning]="data.variant === 'warning'">
+  <header class="confirm-header">
+    <span class="confirm-icon" aria-hidden="true">
+      <mat-icon>{{ data.variant === 'danger' ? 'delete_forever' : 'warning_amber' }}</mat-icon>
+    </span>
+    <div class="confirm-copy">
+      <h2>{{ data.title }}</h2>
+      <p>{{ data.message }}</p>
+    </div>
+  </header>
+
+  <footer class="confirm-actions">
+    <button mat-stroked-button type="button" class="btn-cancel" (click)="onCancel()">
+      {{ data.cancelText || 'Cancelar' }}
+    </button>
+    <button mat-flat-button type="button" class="btn-confirm" (click)="onConfirm()">
+      {{ data.confirmText || 'Confirmar' }}
+    </button>
+  </footer>
+</section>

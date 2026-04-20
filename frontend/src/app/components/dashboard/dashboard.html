@@ -46,18 +46,18 @@
       </mat-card-content>
     </mat-card>
 
-    <mat-menu #menuVisitas="matMenu" class="widget-menu-panel">
-      <button mat-menu-item (click)="verDetalle('visitas')">
-        <mat-icon>open_in_new</mat-icon>
-        <span>Ver detalle</span>
+    <mat-menu #menuVisitas="matMenu" panelClass="widget-menu-panel">
+      <button mat-menu-item (click)="irVista('/visitas', { accion: 'hoy' })">
+        <mat-icon>today</mat-icon>
+        <span>Ver visitas de hoy</span>
       </button>
-      <button mat-menu-item (click)="irModulo('visitas')">
-        <mat-icon>launch</mat-icon>
-        <span>Ir al módulo relacionado</span>
+      <button mat-menu-item (click)="irVista('/visitas', { accion: 'por-local' })">
+        <mat-icon>storefront</mat-icon>
+        <span>Visitas por local</span>
       </button>
-      <button mat-menu-item (click)="refrescarWidget('visitas')">
-        <mat-icon>refresh</mat-icon>
-        <span>Refrescar datos</span>
+      <button mat-menu-item (click)="irVista('/reportes', { seccion: 'visitas' })">
+        <mat-icon>analytics</mat-icon>
+        <span>Reporte de visitas</span>
       </button>
     </mat-menu>
 
@@ -98,18 +98,18 @@
       </mat-card-content>
     </mat-card>
 
-    <mat-menu #menuEstado="matMenu" class="widget-menu-panel">
-      <button mat-menu-item (click)="verDetalle('estado')">
-        <mat-icon>open_in_new</mat-icon>
-        <span>Ver detalle</span>
+    <mat-menu #menuEstado="matMenu" panelClass="widget-menu-panel">
+      <button mat-menu-item (click)="irVista('/activos', { estado: 'Operativo' })">
+        <mat-icon>check_circle</mat-icon>
+        <span>Revisar activos operativos</span>
       </button>
-      <button mat-menu-item (click)="irModulo('estado')">
-        <mat-icon>launch</mat-icon>
-        <span>Ir al módulo relacionado</span>
+      <button mat-menu-item (click)="irVista('/activos', { estado: 'Mantenimiento' })">
+        <mat-icon>build_circle</mat-icon>
+        <span>Ver en mantenimiento</span>
       </button>
-      <button mat-menu-item (click)="refrescarWidget('estado')">
-        <mat-icon>refresh</mat-icon>
-        <span>Refrescar datos</span>
+      <button mat-menu-item (click)="irVista('/reportes', { seccion: 'estado' })">
+        <mat-icon>insights</mat-icon>
+        <span>Reporte de estado general</span>
       </button>
     </mat-menu>
 
@@ -136,18 +136,18 @@
       </mat-card-content>
     </mat-card>
 
-    <mat-menu #menuPedidos="matMenu" class="widget-menu-panel">
-      <button mat-menu-item (click)="verDetalle('pedidos')">
-        <mat-icon>open_in_new</mat-icon>
-        <span>Ver detalle</span>
+    <mat-menu #menuPedidos="matMenu" panelClass="widget-menu-panel">
+      <button mat-menu-item (click)="irVista('/pedidos', { accion: 'crear' })">
+        <mat-icon>add_shopping_cart</mat-icon>
+        <span>Crear pedido</span>
       </button>
-      <button mat-menu-item (click)="irModulo('pedidos')">
-        <mat-icon>launch</mat-icon>
-        <span>Ir al módulo relacionado</span>
+      <button mat-menu-item (click)="irVista('/pedidos', { accion: 'listar' })">
+        <mat-icon>shopping_cart</mat-icon>
+        <span>Ver pedidos activos</span>
       </button>
-      <button mat-menu-item (click)="refrescarWidget('pedidos')">
-        <mat-icon>refresh</mat-icon>
-        <span>Refrescar datos</span>
+      <button mat-menu-item (click)="irVista('/tickets', { estado: 'sin-resolver' })">
+        <mat-icon>support_agent</mat-icon>
+        <span>Resolver tickets pendientes</span>
       </button>
     </mat-menu>
 
@@ -191,18 +191,18 @@
       </mat-card-content>
     </mat-card>
 
-    <mat-menu #menuMapa="matMenu" class="widget-menu-panel">
-      <button mat-menu-item (click)="verDetalle('mapa')">
-        <mat-icon>open_in_new</mat-icon>
-        <span>Ver detalle</span>
+    <mat-menu #menuMapa="matMenu" panelClass="widget-menu-panel">
+      <button mat-menu-item (click)="irVista('/locales', { vista: 'mapa' })">
+        <mat-icon>map</mat-icon>
+        <span>Gestionar locales en mapa</span>
       </button>
-      <button mat-menu-item (click)="irModulo('mapa')">
-        <mat-icon>launch</mat-icon>
-        <span>Ir al módulo relacionado</span>
+      <button mat-menu-item (click)="irVista('/activos', { vista: 'mapa' })">
+        <mat-icon>memory</mat-icon>
+        <span>Ver activos por ubicación</span>
       </button>
-      <button mat-menu-item (click)="refrescarWidget('mapa')">
-        <mat-icon>refresh</mat-icon>
-        <span>Refrescar datos</span>
+      <button mat-menu-item (click)="irVista('/reportes', { seccion: 'geografico' })">
+        <mat-icon>public</mat-icon>
+        <span>Reporte geográfico</span>
       </button>
     </mat-menu>
 
@@ -269,18 +269,18 @@
       </mat-card-content>
     </mat-card>
 
-    <mat-menu #menuRegistros="matMenu" class="widget-menu-panel">
-      <button mat-menu-item (click)="verDetalle('registros')">
-        <mat-icon>open_in_new</mat-icon>
-        <span>Ver detalle</span>
+    <mat-menu #menuRegistros="matMenu" panelClass="widget-menu-panel">
+      <button mat-menu-item (click)="irVista('/activos', { accion: 'crear' })">
+        <mat-icon>add_box</mat-icon>
+        <span>Registrar activo</span>
       </button>
-      <button mat-menu-item (click)="irModulo('registros')">
-        <mat-icon>launch</mat-icon>
-        <span>Ir al módulo relacionado</span>
+      <button mat-menu-item (click)="irVista('/tickets', { accion: 'crear' })">
+        <mat-icon>add_alert</mat-icon>
+        <span>Crear ticket</span>
       </button>
-      <button mat-menu-item (click)="refrescarWidget('registros')">
-        <mat-icon>refresh</mat-icon>
-        <span>Refrescar datos</span>
+      <button mat-menu-item (click)="irVista('/usuarios', { accion: 'gestionar' })">
+        <mat-icon>manage_accounts</mat-icon>
+        <span>Gestionar usuarios</span>
       </button>
     </mat-menu>
   </div>

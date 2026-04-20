@@ -256,6 +256,16 @@ export class Dashboard implements OnInit, AfterViewInit, OnDestroy {
     this.router.navigate([route], { queryParams: { from: 'dashboard' } });
   }
 
+  irVista(route: string, queryParams: Record<string, string> = {}): void {
+    const normalizedRoute = route.startsWith('/') ? route : `/${route}`;
+    this.router.navigate([normalizedRoute], {
+      queryParams: {
+        from: 'dashboard',
+        ...queryParams,
+      },
+    });
+  }
+
   refrescarWidget(widget: DashboardWidget): void {
     switch (widget) {
       case 'visitas':
