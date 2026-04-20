@@ -116,6 +116,11 @@ export class Activos implements OnInit, OnDestroy {
 
   setActiveTab(tab: 'list' | 'create'): void {
     this.activeTab = tab;
+    if (tab === 'list') {
+      this.cancelEdit();
+    } else if (tab === 'create' && !this.isEditing) {
+      this.resetForm();
+    }
   }
 
   generateCodigo(): string {

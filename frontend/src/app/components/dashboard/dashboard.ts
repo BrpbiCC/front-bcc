@@ -11,6 +11,7 @@ import { Chart, registerables } from 'chart.js';
 import { MapaLocalesComponent } from '../mapa-locales/mapa-locales.component';
 import { Subscription } from 'rxjs';
 import { AuthService, type UserRole } from '../../core/services/auth.service';
+import { DashboardRealtimeService, type DashboardMetrics } from '../../core/services/dashboard-realtime.service';
 
 Chart.register(...registerables);
 
@@ -114,7 +115,7 @@ export class Dashboard implements OnInit, AfterViewInit, OnDestroy {
 
   private meses = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(private authService: AuthService, private router: Router, private dashboardRealtimeService: DashboardRealtimeService) {}
 
   ngOnInit(): void {
     this.actualizarMetricasPorRol(this.authService.getRole());
@@ -122,6 +123,21 @@ export class Dashboard implements OnInit, AfterViewInit, OnDestroy {
       this.authService.role$.subscribe((role) => {
         this.actualizarMetricasPorRol(role);
       }),
+    );
+
+    // Suscribirse a las métricas en tiempo real
+    this.subscriptions.add(
+      this.dashboardRealtimeService.connect().subscribe((metrics: DashboardMetrics) => {
+        this.metricas = [
+          { label: 'Total Tenants', valor: metrics.totalTenants.toLocaleString(), subvalor: `↑ ${metrics.newTenantsThisMonth} nuevos este mes`, icono: "domain", color: 'primary' },
+          { label: 'Visitas', valor: metrics.visits.toLocaleString(), subvalor: `↑ ${metrics.visitsWeeklyGrowth}% esta semana`, icono: 'visibility', color: 'accent' },
+          { label: 'Tickets abiertos', valor: metrics.openTickets, subvalor: `↓ ${metrics.ticketsResolvedToday} resueltos hoy`, icono: 'confirmation_number', color: 'warn' },
+          { label: 'Pedidos activos', valor: metrics.activeOrders, subvalor: `↑ ${metrics.ordersDailyGrowth}% vs ayer`, icono: 'shopping_cart', color: 'success' },
+          { label: 'Locales', valor: metrics.locals, subvalor: `${metrics.localsWithoutTenants} sin tenants`, icono: 'store', color: 'info' },
+          { label: 'Usuarios', valor: metrics.users.toLocaleString(), subvalor: `↑ ${metrics.usersMonthlyGrowth}% este mes`, icono: 'group', color: 'purple' },
+        ];
+        this.actualizarMetricasPorRol(this.authService.getRole());
+      })
     );
   }
 

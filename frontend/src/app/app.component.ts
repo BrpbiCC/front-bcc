@@ -15,6 +15,7 @@ import { FilterService } from './core/services/filter.service';
 export class AppComponent implements OnInit {
   sidebarCollapsed = false;
   sidebarHidden = false;
+  private readonly SIDEBAR_COLLAPSE_BREAKPOINT = 1100;
 
   constructor(
     private router: Router,
@@ -33,9 +34,12 @@ export class AppComponent implements OnInit {
   }
 
   private checkScreenSize(): void {
-    const aspectRatio = window.innerWidth / window.innerHeight;
     const width = window.innerWidth;
-    this.sidebarHidden = (width <= 1024 && aspectRatio > 0.75) || width <= 768;
+    const shouldCollapse = width <= this.SIDEBAR_COLLAPSE_BREAKPOINT;
+
+    // En responsive mantenemos el sidebar visible pero colapsado para ganar espacio.
+    this.sidebarHidden = false;
+    this.sidebarCollapsed = shouldCollapse;
   }
 
   toggleSidebar() {

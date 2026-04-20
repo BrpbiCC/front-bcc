@@ -73,7 +73,9 @@ export class Visitas implements OnInit {
 
   setActiveTab(tab: 'list' | 'create'): void {
     this.activeTab = tab;
-    if (tab === 'create' && !this.isEditing) {
+    if (tab === 'list') {
+      this.cancelEdit();
+    } else if (tab === 'create' && !this.isEditing) {
       this.resetForm();
     }
   }
