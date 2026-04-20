@@ -18,28 +18,30 @@
         </tr>
       </thead>
       <tbody>
-        <tr>
-          <td class="mono">TK-1042</td>
-          <td>Pérdida de frío en vitrina</td>
-          <td><span class="prio high">Alta</span></td>
-          <td class="mono muted">NFC-1933</td>
-          <td class="muted">Hace 2 horas</td>
-        </tr>
-        <tr>
-          <td class="mono">TK-1041</td>
-          <td>Luz LED parpadeando</td>
-          <td><span class="prio low">Baja</span></td>
-          <td class="mono muted">NFC-8472</td>
-          <td class="muted">Ayer</td>
-        </tr>
-        <tr>
-          <td class="mono">TK-1040</td>
-          <td>Compresor hace ruido inusual</td>
-          <td><span class="prio medium">Media</span></td>
-          <td class="mono muted">NFC-3311</td>
-          <td class="muted">Hace 3 días</td>
+        <tr *ngFor="let ticket of tickets" (click)="selectTicket(ticket)" [class.selected]="selectedTicket?.id === ticket.id">
+          <td class="mono">{{ ticket.id }}</td>
+          <td>{{ ticket.asunto }}</td>
+          <td><span class="prio" [ngClass]="{ high: ticket.prioridad === 'Alta', medium: ticket.prioridad === 'Media', low: ticket.prioridad === 'Baja' }">{{ ticket.prioridad }}</span></td>
+          <td class="mono muted">{{ ticket.equipo }}</td>
+          <td class="muted">{{ ticket.creacion }}</td>
         </tr>
       </tbody>
     </table>
+  </div>
+
+  <div class="ticket-detail-overlay" *ngIf="selectedTicket" (click)="selectedTicket = undefined">
+    <div class="ticket-detail-window" (click)="$event.stopPropagation()">
+      <button class="ticket-detail-close" type="button" (click)="selectedTicket = undefined" aria-label="Cerrar detalles del ticket">×</button>
+      <h3>Detalles del Ticket</h3>
+      <div class="ticket-info-grid">
+        <div><strong>ID:</strong> {{ selectedTicket.id }}</div>
+        <div><strong>Estado:</strong> {{ selectedTicket.estado }}</div>
+        <div><strong>Asunto:</strong> {{ selectedTicket.asunto }}</div>
+        <div><strong>Equipo NFC:</strong> {{ selectedTicket.equipo }}</div>
+        <div><strong>Prioridad:</strong> {{ selectedTicket.prioridad }}</div>
+        <div><strong>Creación:</strong> {{ selectedTicket.creacion }}</div>
+        <div class="info-full"><strong>Descripción:</strong> {{ selectedTicket.descripcion }}</div>
+      </div>
+    </div>
   </div>
 </div>

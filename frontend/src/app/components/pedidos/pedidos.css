@@ -191,8 +191,106 @@
 .data-table tbody tr:last-child td {
   border-bottom: none;
 }
+.data-table tbody tr {
+  cursor: pointer;
+}
+
 .data-table tbody tr:hover {
   background-color: var(--hover-overlay-1);
+}
+
+.data-table tbody tr.selected {
+  background-color: var(--hover-overlay-2);
+}
+
+.pedido-detail-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  z-index: 50;
+}
+
+.pedido-detail-window {
+  width: min(820px, 100%);
+  background-color: var(--surface-lowest);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.15);
+  padding: 2rem;
+  position: relative;
+}
+
+.pedido-detail-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 34px;
+  height: 34px;
+  border: none;
+  border-radius: 50%;
+  background: var(--surface);
+  color: var(--text-primary);
+  font-size: 1.25rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.pedido-detail-close:hover,
+.pedido-detail-close:focus-visible {
+  background: var(--hover-overlay-1);
+  color: var(--primary);
+  outline: none;
+}
+
+.pedido-detail-window h3 {
+  margin: 0 0 1rem 0;
+  color: var(--text-primary);
+  font-size: 1.1rem;
+}
+
+.pedido-info-grid {
+  display: grid;
+  gap: 0.9rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.pedido-info-grid div {
+  display: flex;
+  gap: 0.5rem;
+  color: var(--text-primary);
+}
+
+.pedido-info-grid strong {
+  color: var(--text-secondary);
+}
+
+.info-full {
+  grid-column: span 2;
+}
+
+.pedido-info-grid {
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.pedido-info-grid div {
+  display: flex;
+  gap: 0.4rem;
+  color: var(--text-primary);
+}
+
+.pedido-info-grid strong {
+  color: var(--text-secondary);
+}
+
+.info-full {
+  grid-column: span 2;
 }
 
 .mono {

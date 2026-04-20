@@ -79,14 +79,6 @@
   margin-bottom: 2rem;
 }
 
-.login-header {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  margin-bottom: 2rem;
-}
-
 .logo-image {
   max-width: 200px;
   height: auto;
@@ -172,8 +164,25 @@
   font-family: inherit;
   width: 100%;
 }
+
 .input-wrap input::placeholder {
   color: var(--text-light);
+}
+
+/* ─── Fix autofill del navegador (Chrome, Edge, Safari) ───────────────────────
+   El navegador fuerza un fondo blanco en campos autocompletados ignorando
+   background: transparent. Se neutraliza con un box-shadow inset que usa las
+   mismas variables CSS del tema, por lo que funciona tanto en modo claro
+   como en modo oscuro sin lógica adicional.
+────────────────────────────────────────────────────────────────────────────── */
+.input-wrap input:-webkit-autofill,
+.input-wrap input:-webkit-autofill:hover,
+.input-wrap input:-webkit-autofill:focus,
+.input-wrap input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 1000px var(--surface) inset !important;
+  -webkit-text-fill-color: var(--text-primary) !important;
+  caret-color: var(--text-primary) !important;
+  transition: background-color 9999s ease-in-out 0s;
 }
 
 .input-wrap-password {
@@ -234,6 +243,7 @@
     background 0.2s,
     transform 0.1s;
 }
+
 .btn-login:hover {
   background-color: var(--primary-hover);
 }
@@ -263,6 +273,7 @@
   text-decoration: none;
   transition: color 0.2s;
 }
+
 .forgot-link:hover {
   color: var(--primary);
 }
@@ -445,4 +456,24 @@
 
 .btn-close:hover {
   background-color: var(--primary-hover);
+}
+
+/* Mensajes del modal */
+.message {
+  font-size: 0.875rem;
+  border-radius: 8px;
+  padding: 0.65rem 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.error-message {
+  color: #b42318;
+  background: #fef3f2;
+  border: 1px solid #fecdca;
+}
+
+.success-message {
+  color: #155724;
+  background: #d4edda;
+  border: 1px solid #c3e6cb;
 }

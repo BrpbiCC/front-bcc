@@ -24,6 +24,10 @@ export class Login implements OnInit, OnDestroy {
     }),
   });
 
+  forgotForm = new FormGroup({
+    email: new FormControl('', [Validators.required, Validators.email])
+  });
+
   logoLight = '/imagenes/logos/FrioCheck.svg';
   logoDark = '/imagenes/logos/FrioCheckDark.svg';
   isLoading = false;
@@ -36,7 +40,6 @@ export class Login implements OnInit, OnDestroy {
 
   // Modal de recuperación
   showForgotModal = false;
-  forgotEmail = '';
   forgotIsLoading = false;
   forgotSuccessMessage = '';
   forgotErrorMessage = '';
@@ -52,6 +55,19 @@ export class Login implements OnInit, OnDestroy {
   ngOnInit() {
     this.loadSavedTheme();
     this.redirectIfAuthenticated();
+
+    // ─── Fix campos guardados por el navegador ─────────────────────────────────
+    // El reset inmediato limpia el estado de Angular, pero el autofill del
+    // navegador se inyecta DESPUÉS de que Angular inicializa el componente.
+    // El setTimeout con 100ms garantiza que el reset ocurra luego del autofill,
+    // dejando los campos visualmente vacíos y listos para escribir.
+    // ──────────────────────────────────────────────────────────────────────────
+    this.loginForm.reset({ email: '', password: '' });
+    setTimeout(() => {
+      this.loginForm.reset({ email: '', password: '' });
+      this.forgotForm.reset();
+    }, 100);
+
     this.subscriptions.add(
       this.loginForm.valueChanges.subscribe(() => {
         this.loginError = '';
@@ -127,6 +143,25 @@ export class Login implements OnInit, OnDestroy {
     return '';
   }
 
+  shouldShowForgotError(): boolean {
+    const control = this.forgotForm.controls.email;
+    return control.invalid && control.touched;
+  }
+
+  getForgotError(): string {
+    const control = this.forgotForm.controls.email;
+
+    if (control.hasError('required')) {
+      return 'El correo es obligatorio.';
+    }
+
+    if (control.hasError('email')) {
+      return 'Ingresa un correo válido (ejemplo@dominio.com).';
+    }
+
+    return '';
+  }
+
   onLogin(): void {
     this.loginSubmitted = true;
     this.loginForm.controls.email.setValue(this.loginForm.controls.email.value.trim());
@@ -163,7 +198,7 @@ export class Login implements OnInit, OnDestroy {
   openForgotModal(event?: Event) {
     event?.preventDefault();
     this.showForgotModal = true;
-    this.forgotEmail = '';
+    this.forgotForm.reset();
     this.forgotSuccessMessage = '';
     this.forgotErrorMessage = '';
     this.forgotRecoverySent = false;
@@ -171,13 +206,21 @@ export class Login implements OnInit, OnDestroy {
 
   closeForgotModal() {
     this.showForgotModal = false;
+    this.forgotForm.reset();
     this.forgotRecoverySent = false;
   }
 
   onSendRecovery() {
+    if (this.forgotForm.invalid) {
+      this.forgotForm.markAllAsTouched();
+      return;
+    }
+
     this.forgotIsLoading = true;
     this.forgotSuccessMessage = '';
     this.forgotErrorMessage = '';
+
+    const { email } = this.forgotForm.getRawValue();
 
     // Simular envío de recuperación
     setTimeout(() => {
@@ -186,10 +229,10 @@ export class Login implements OnInit, OnDestroy {
       this.forgotRecoverySent = true;
       this.forgotIsLoading = false;
 
-      // Cerrar automáticamente después de 2 segundos si fue exitoso
+      // Cerrar automáticamente después de 10 segundos si fue exitoso
       setTimeout(() => {
         this.closeForgotModal();
-      }, 2000);
+      }, 10000);
 
       // Para simular error:
       // this.forgotErrorMessage = 'Usuario no encontrado. Verifica tu correo o usuario.';

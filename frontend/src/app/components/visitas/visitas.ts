@@ -58,7 +58,7 @@ export class Visitas implements OnInit {
 
   newVisita: Visita = {
     tiempo: '',
-    dia: 'Hoy',
+    dia: '',
     titulo: '',
     local: '',
     tecnico: '',
@@ -73,6 +73,9 @@ export class Visitas implements OnInit {
 
   setActiveTab(tab: 'list' | 'create'): void {
     this.activeTab = tab;
+    if (tab === 'create' && !this.isEditing) {
+      this.resetForm();
+    }
   }
 
   createVisita(): void {
@@ -110,7 +113,7 @@ export class Visitas implements OnInit {
   resetForm(): void {
     this.newVisita = {
       tiempo: '',
-      dia: 'Hoy',
+      dia: '',
       titulo: '',
       local: '',
       tecnico: '',

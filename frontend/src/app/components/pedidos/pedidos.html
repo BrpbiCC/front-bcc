@@ -36,7 +36,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let pedido of pedidos">
+          <tr *ngFor="let pedido of pedidos" (click)="selectPedido(pedido)" [class.selected]="selectedPedido?.orden === pedido.orden">
             <td class="mono">{{ pedido.orden }}</td>
             <td>{{ pedido.material }}</td>
             <td>{{ pedido.cantidad }} {{ pedido.unidad }}</td>
@@ -46,7 +46,22 @@
         </tbody>
       </table>
     </div>
-  </div>
+      <div class="pedido-detail-overlay" *ngIf="selectedPedido" (click)="selectedPedido = undefined">
+        <div class="pedido-detail-window" (click)="$event.stopPropagation()">
+          <button class="pedido-detail-close" type="button" (click)="selectedPedido = undefined" aria-label="Cerrar ventana de pedido">×</button>
+          <h3>Información del pedido</h3>
+          <div class="pedido-info-grid">
+            <div><strong>N° Orden:</strong> {{ selectedPedido.orden }}</div>
+            <div><strong>Estado:</strong> {{ selectedPedido.estado }}</div>
+            <div><strong>Material / Equipo:</strong> {{ selectedPedido.material }}</div>
+            <div><strong>Cantidad:</strong> {{ selectedPedido.cantidad }} {{ selectedPedido.unidad }}</div>
+            <div><strong>Prioridad:</strong> {{ selectedPedido.prioridad }}</div>
+            <div><strong>Fecha Solicitud:</strong> {{ selectedPedido.fechaSolicitud }}</div>
+            <div class="info-full"><strong>Observaciones:</strong> {{ selectedPedido.observaciones || 'Sin observaciones' }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
 
   <!-- Pestaña: Solicitar Material -->
   <div class="tab-content" *ngIf="activeTab === 'create'">

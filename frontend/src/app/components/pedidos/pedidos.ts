@@ -65,6 +65,7 @@ export class Pedidos implements OnInit {
 
   unidades = ['uds', 'kg', 'm', 'l', 'm²', 'm³'];
   prioridades = ['Baja', 'Media', 'Alta', 'Urgente'];
+  selectedPedido?: Pedido;
 
   constructor(private filterService: FilterService) {}
 
@@ -74,6 +75,10 @@ export class Pedidos implements OnInit {
 
   setActiveTab(tab: string): void {
     this.activeTab = tab;
+  }
+
+  selectPedido(pedido: Pedido): void {
+    this.selectedPedido = this.selectedPedido?.orden === pedido.orden ? undefined : pedido;
   }
 
   createPedido(): void {

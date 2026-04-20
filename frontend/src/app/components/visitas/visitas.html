@@ -67,6 +67,7 @@
           [(ngModel)]="newVisita.dia"
           name="dia"
           required>
+          <option value="">Seleccione un día</option>
           <option *ngFor="let dia of dias" [value]="dia">{{ dia }}</option>
         </select>
       </div>
