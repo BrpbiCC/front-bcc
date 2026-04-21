@@ -1,2 +1,43 @@
 /* You can add global styles to this file, and also import other style files */
 @import './app/styles/colors.css';
+
+html {
+	scrollbar-gutter: stable;
+}
+
+/* Scrollbar global sutil para toda la app (Edge/Chrome/Firefox). */
+* {
+	scrollbar-width: thin;
+	scrollbar-color: transparent transparent;
+}
+
+*:hover,
+*:focus,
+*:focus-within {
+	scrollbar-color: var(--border) transparent;
+}
+
+*::-webkit-scrollbar {
+	width: 7px;
+	height: 7px;
+}
+
+*::-webkit-scrollbar-track {
+	background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+	background-color: transparent;
+	border-radius: 999px;
+	transition: background-color 0.2s ease;
+}
+
+*:hover::-webkit-scrollbar-thumb,
+*:focus::-webkit-scrollbar-thumb,
+*:focus-within::-webkit-scrollbar-thumb {
+	background-color: var(--border);
+}
+
+*::-webkit-scrollbar-thumb:hover {
+	background-color: var(--text-muted);
+}

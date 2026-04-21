@@ -25,15 +25,56 @@
 
       <div class="form-group">
         <label for="pass-actual">Contraseña actual</label>
-        <input id="pass-actual" type="password" placeholder="••••••••" />
+        <div class="password-input-wrapper">
+          <input
+            id="pass-actual"
+            class="password-current-input"
+            [type]="showCurrentPassword ? 'text' : 'password'"
+            [(ngModel)]="passwordActual"
+            name="passwordActual"
+            placeholder="••••••••"
+            autocomplete="current-password"
+          />
+          <button
+            type="button"
+            class="password-toggle"
+            [attr.aria-label]="showCurrentPassword ? 'Ocultar contraseña actual' : 'Mostrar contraseña actual'"
+            [title]="showCurrentPassword ? 'Ocultar contraseña actual' : 'Mostrar contraseña actual'"
+            (click)="toggleCurrentPasswordVisibility()"
+          >
+            <span class="material-icons" aria-hidden="true">
+              {{ showCurrentPassword ? 'visibility_off' : 'visibility' }}
+            </span>
+          </button>
+        </div>
       </div>
 
       <div class="form-group">
         <label for="pass-nueva">Nueva contraseña</label>
-        <input id="pass-nueva" type="password" placeholder="••••••••" />
+        <div class="password-input-wrapper">
+          <input
+            id="pass-nueva"
+            [type]="showNewPassword ? 'text' : 'password'"
+            [(ngModel)]="passwordNueva"
+            name="passwordNueva"
+            placeholder="••••••••"
+            autocomplete="new-password"
+          />
+          <button
+            type="button"
+            class="password-toggle"
+            [attr.aria-label]="showNewPassword ? 'Ocultar nueva contraseña' : 'Mostrar nueva contraseña'"
+            [title]="showNewPassword ? 'Ocultar nueva contraseña' : 'Mostrar nueva contraseña'"
+            (click)="toggleNewPasswordVisibility()"
+          >
+            <span class="material-icons" aria-hidden="true">
+              {{ showNewPassword ? 'visibility_off' : 'visibility' }}
+            </span>
+          </button>
+        </div>
       </div>
 
-      <button class="btn-secondary">Cambiar Contraseña</button>
+      <button class="btn-secondary" type="button" (click)="cambiarContrasena()">Cambiar Contraseña</button>
     </div>
   </div>
 </div>

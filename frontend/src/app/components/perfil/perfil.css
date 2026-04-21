@@ -47,6 +47,7 @@
 
 .form-group input {
   width: 100%;
+  box-sizing: border-box;
   padding: 10px 5px;
   background-color: var(--hover-overlay-1);
   border: 1px solid var(--border);
@@ -62,6 +63,68 @@
 }
 .form-group input::placeholder {
   color: var(--text-dark);
+}
+
+.password-input-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.password-input-wrapper input {
+  padding-right: 38px;
+}
+.password-current-input {
+  background-color: var(--surface-lowest) !important;
+}
+
+.password-current-input:focus {
+  background-color: var(--surface-lowest) !important;
+}
+
+.password-current-input:-webkit-autofill,
+.password-current-input:-webkit-autofill:hover,
+.password-current-input:-webkit-autofill:focus,
+.password-current-input:-webkit-autofill:active {
+  -webkit-text-fill-color: var(--text-primary) !important;
+  -webkit-box-shadow: 0 0 0 1000px var(--surface-lowest) inset !important;
+  box-shadow: 0 0 0 1000px var(--surface-lowest) inset !important;
+  border: 1px solid var(--border) !important;
+  caret-color: var(--text-primary);
+  transition: background-color 99999s ease-out 0s;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.password-toggle:hover {
+  color: var(--primary);
+  background-color: var(--hover-overlay-1);
+}
+
+.password-toggle .material-icons {
+  font-size: 18px;
+  line-height: 1;
+}
+
+/* Oculta el icono nativo de Edge/IE para evitar doble "ojo" junto al toggle custom. */
+.password-input-wrapper input[type='password']::-ms-reveal,
+.password-input-wrapper input[type='password']::-ms-clear {
+  display: none;
 }
 
 .btn-primary {

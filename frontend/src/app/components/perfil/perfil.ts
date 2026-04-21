@@ -14,6 +14,10 @@ import { FilterService } from '../../core/services/filter.service';
 export class Perfil implements OnInit {
   nombre = 'Administrador Principal';
   email = 'admin@friocheck.com';
+  passwordActual = '';
+  passwordNueva = '';
+  showCurrentPassword = false;
+  showNewPassword = false;
 
   constructor(
     private filterService: FilterService,
@@ -26,5 +30,21 @@ export class Perfil implements OnInit {
 
   guardar() {
     // lógica de guardado
+  }
+
+  toggleCurrentPasswordVisibility(): void {
+    this.showCurrentPassword = !this.showCurrentPassword;
+  }
+
+  toggleNewPasswordVisibility(): void {
+    this.showNewPassword = !this.showNewPassword;
+  }
+
+  cambiarContrasena(): void {
+    // Placeholder para futura integracion con backend.
+    this.passwordActual = '';
+    this.passwordNueva = '';
+    this.showCurrentPassword = false;
+    this.showNewPassword = false;
   }
 }
