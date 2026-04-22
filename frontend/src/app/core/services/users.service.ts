@@ -44,6 +44,7 @@ export interface UpdateUserRequest {
   role?: string;
   phone?: string;
   active?: boolean;
+  tenantId?: string;
 }
 
 @Injectable({

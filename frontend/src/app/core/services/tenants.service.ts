@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, catchError, map, of } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
 export interface BackendTenant {
@@ -19,6 +19,16 @@ export interface BackendTenant {
   createdAt?: string;
   updatedAt?: string;
 }
+
+interface BackendTenantsResponse {
+  tenants?: BackendTenant[];
+  data?: BackendTenant[];
+  items?: BackendTenant[];
+  result?: BackendTenant | BackendTenant[];
+  tenant?: BackendTenant;
+}
+
+type TenantsApiResponse = BackendTenant[] | BackendTenant | BackendTenantsResponse;
 
 export interface CreateTenantRequest {
   name: string;
@@ -43,7 +53,10 @@ export class TenantsService {
   constructor(private http: HttpClient) {}
 
   getTenants(): Observable<BackendTenant[]> {
-    return this.http.get<BackendTenant[]>(this.apiUrl);
+    return this.http.get<TenantsApiResponse>(this.apiUrl).pipe(
+      map((response) => this.normalizeTenantsResponse(response)),
+      catchError(() => of([])),
+    );
   }
 
   getTenantById(id: string): Observable<BackendTenant> {
@@ -60,5 +73,49 @@ export class TenantsService {
 
   deleteTenant(id: string): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
+
+  private normalizeTenantsResponse(response: TenantsApiResponse): BackendTenant[] {
+    if (!response) {
+      return [];
+    }
+
+    if (Array.isArray(response)) {
+      return response;
+    }
+
+    if (this.isBackendTenant(response)) {
+      return [response];
+    }
+
+    if (Array.isArray(response.tenants)) {
+      return response.tenants;
+    }
+
+    if (Array.isArray(response.data)) {
+      return response.data;
+    }
+
+    if (Array.isArray(response.items)) {
+      return response.items;
+    }
+
+    if (Array.isArray(response.result)) {
+      return response.result;
+    }
+
+    if (response.tenant && this.isBackendTenant(response.tenant)) {
+      return [response.tenant];
+    }
+
+    if (response.result && this.isBackendTenant(response.result)) {
+      return [response.result];
+    }
+
+    return [];
+  }
+
+  private isBackendTenant(value: unknown): value is BackendTenant {
+    return typeof value === 'object' && value !== null && 'id' in value;
   }
 }

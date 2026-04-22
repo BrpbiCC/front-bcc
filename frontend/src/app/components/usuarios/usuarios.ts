@@ -5,6 +5,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Subscription, debounceTime, distinctUntilChanged, finalize, map } from 'rxjs';
 import { FilterService } from '../../core/services/filter.service';
 import { AuthService } from '../../core/services/auth.service';
+import { TenantsService, type BackendTenant } from '../../core/services/tenants.service';
 import {
   UsersService,
   type BackendUser,
@@ -22,6 +23,7 @@ interface Usuario {
   role: string;
   roleLabel: string;
   status: 'Activo' | 'Inactivo';
+  tenantId?: string;
 }
 
 @Component({
@@ -54,10 +56,17 @@ export class Usuarios implements OnInit, OnDestroy {
     phone: '',
     role: '',
     roleLabel: '',
-    status: 'Activo'
+    status: 'Activo',
+    tenantId: '',
   };
 
   roles: string[] = ['TECHNICIAN', 'DRIVER', 'VENDOR', 'RETAILER', 'SUPPORT', 'ADMIN'];
+
+  get availableRoles(): string[] {
+    return this.isSuperAdmin ? ['ADMIN', 'SUPPORT'] : this.roles;
+  }
+
+  tenants: BackendTenant[] = [];
 
   private readonly roleLabels: Record<string, string> = {
     TECHNICIAN: 'Tecnico',
@@ -70,9 +79,14 @@ export class Usuarios implements OnInit, OnDestroy {
     SUPER_ADMIN: 'Super Administrador',
   };
 
+  get isSuperAdmin(): boolean {
+    return this.authService.getRole() === 'super-admin';
+  }
+
   constructor(
     private filterService: FilterService,
     private usersService: UsersService,
+    private tenantsService: TenantsService,
     private authService: AuthService,
   ) {}
 
@@ -91,6 +105,7 @@ export class Usuarios implements OnInit, OnDestroy {
     );
 
     this.loadUsers();
+    this.loadTenants();
   }
 
   ngOnDestroy(): void {
@@ -112,6 +127,22 @@ export class Usuarios implements OnInit, OnDestroy {
         this.loadError = this.buildLoadErrorMessage(error, 'usuarios');
       },
     }));
+  }
+
+  private loadTenants(): void {
+    this.subscriptions.add(
+      this.tenantsService.getTenants().subscribe({
+        next: (tenants) => {
+          this.tenants = tenants;
+          if (!this.isSuperAdmin && !this.newUsuario.tenantId) {
+            this.newUsuario.tenantId = this.authService.getTenantId() ?? undefined;
+          }
+        },
+        error: () => {
+          this.tenants = [];
+        },
+      }),
+    );
   }
 
   private buildLoadErrorMessage(error: HttpErrorResponse, resource: 'usuarios' | 'tenants'): string {
@@ -145,6 +176,7 @@ export class Usuarios implements OnInit, OnDestroy {
       role: roleCodes[0] ?? '',
       roleLabel: roleCodes.length ? roleCodes.map((role) => this.getRoleLabel(role)).join(', ') : 'Sin rol',
       status: user.active ? 'Activo' : 'Inactivo',
+      tenantId: user.tenantId ?? undefined,
     };
   }
 
@@ -309,17 +341,23 @@ export class Usuarios implements OnInit, OnDestroy {
         return;
       }
 
+      if (this.isSuperAdmin && !this.newUsuario.tenantId) {
+        this.createError = 'Debes seleccionar una empresa para el usuario.';
+        return;
+      }
+
       const [firstName, ...lastNameParts] = name.split(/\s+/);
       const lastName = lastNameParts.join(' ').trim();
 
-      const payload: UpdateUserRequest = {
+      const payload = {
         email,
         firstName: firstName ?? '',
         lastName,
         phone,
         role: normalizedRole,
         active: this.newUsuario.status === 'Activo',
-      };
+        tenantId: this.isSuperAdmin ? this.newUsuario.tenantId : undefined,
+      } as UpdateUserRequest;
 
       this.createError = null;
       this.isCreating = true;
@@ -352,6 +390,11 @@ export class Usuarios implements OnInit, OnDestroy {
       return;
     }
 
+    if (this.isSuperAdmin && !this.newUsuario.tenantId) {
+      this.createError = 'Debes seleccionar una empresa para el usuario.';
+      return;
+    }
+
     const [firstName, ...lastNameParts] = name.split(/\s+/);
     const lastName = lastNameParts.join(' ').trim();
 
@@ -361,7 +404,7 @@ export class Usuarios implements OnInit, OnDestroy {
       firstName: firstName ?? '',
       lastName,
       role,
-      tenantId: this.authService.getTenantId() ?? undefined,
+      tenantId: this.newUsuario.tenantId ?? this.authService.getTenantId() ?? undefined,
       phone,
     };
 
@@ -433,6 +476,7 @@ export class Usuarios implements OnInit, OnDestroy {
     this.resetForm();
     this.isEditing = false;
     this.editingIndex = null;
+    this.activeTab = 'list';
   }
 
   resetForm(): void {
@@ -444,7 +488,8 @@ export class Usuarios implements OnInit, OnDestroy {
       phone: '',
       role: '',
       roleLabel: '',
-      status: 'Activo'
+      status: 'Activo',
+      tenantId: this.isSuperAdmin ? undefined : this.authService.getTenantId() ?? undefined,
     };
     this.createError = null;
   }
